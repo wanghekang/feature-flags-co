@@ -1,0 +1,106 @@
+# ASP.NET Core (.NET Framework)
+# Build and test ASP.NET Core projects targeting the full .NET Framework.
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- main
+
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+jobs:
+
+  # - job: DeployKubernetes
+  #   displayName: Deploy kubernetes-adminwebapis
+  #   steps:
+
+
+  - job: ApplyImageToKubernetes
+    # dependsOn: DeployKubernetes
+    displayName: Apply Image To Kubernetes
+    steps:
+    - task: NuGetToolInstaller@1
+
+    - task: NuGetCommand@2
+      inputs:
+        restoreSolution: '$(solution)'
+
+    - task: DockerInstaller@0
+      inputs:
+        dockerVersion: '17.09.0-ce'
+
+    # - task: Docker@2
+    #   inputs:
+    #     repository: 'featureflagsadminwebapis'
+    #     containerRegistry: 'ffc0acr0ce2'
+    #     azureSubscription: 'azure-china-devops'
+    #     command: 'buildAndPush'
+    #     Dockerfile: '**/Dockerfile'
+    # - task: DockerCompose@0
+    #   inputs:
+    #     containerregistrytype: 'Azure Container Registry'
+    #     azureSubscription: 'feature-flags-dev'
+    #     azureContainerRegistry: '{"loginServer":"agiletoggle.azurecr.io", "id" : "/subscriptions/0b218d59-75a0-4c88-82cf-61244617419d/resourceGroups/feature-flags-co/providers/Microsoft.ContainerRegistry/registries/agiletoggle"}'
+    #     dockerComposeFile: '**/docker-compose.yml'
+    #     additionalDockerComposeFiles: '**/docker-compose.override.yml'
+    #     action: 'Build services'
+    #     additionalImageTags: '$(Build.BuildId)'
+    # - task: DockerCompose@0
+    #   inputs:
+    #     containerregistrytype: 'Azure Container Registry'
+    #     azureSubscription: 'feature-flags-dev'
+    #     azureContainerRegistry: '{"loginServer":"agiletoggle.azurecr.io", "id" : "/subscriptions/0b218d59-75a0-4c88-82cf-61244617419d/resourceGroups/feature-flags-co/providers/Microsoft.ContainerRegistry/registries/agiletoggle"}'
+    #     dockerComposeFile: '**/docker-compose.yml'
+    #     additionalDockerComposeFiles: '**/docker-compose.override.yml'
+    #     action: 'Push services'
+    #     additionalImageTags: '$(Build.BuildId)'
+
+    - task: AzureCLI@2
+      displayName: dockerbuildandpush
+      inputs:
+        azureSubscription: 'azure-china-devops'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        workingDirectory: $(System.DefaultWorkingDirectory)
+        addSpnToEnvironment: true
+        inlineScript: |
+          az login --service-principal -u ${servicePrincipalId} -p ${servicePrincipalKey} --tenant ${tenantId}
+          az acr login --name ffc0acr0ce2
+          docker build -t ffcapi .
+          docker tag ffcapi ffc0acr0ce2.azurecr.cn/ffcapi:$(Build.BuildId)
+          docker push ffc0acr0ce2.azurecr.cn/ffcapi:$(Build.BuildId)
+
+    # - task: AzureCLI@2
+    #   displayName: kubernetes-featureflagsadminwebapis
+    #   inputs:
+    #     azureSubscription: 'azure-china-devops'
+    #     scriptType: 'bash'
+    #     scriptLocation: 'inlineScript'
+    #     workingDirectory: $(System.DefaultWorkingDirectory)
+    #     addSpnToEnvironment: true
+    #     inlineScript: |
+    #       az login --service-principal -u ${servicePrincipalId} -p ${servicePrincipalKey} --tenant ${tenantId}
+    #       az aks get-credentials --resource-group feature-flags-co --name ffc-aks-cluster-ce2
+
+    #       echo 's/#{IMAGE_TAG}#/$(Build.BuildId)/'
+    #       sed -i 's/#{IMAGE_TAG}#/$(Build.BuildId)/' kubernetes-featureflagsadminwebapis-appgw.yaml
+    #       kubectl apply -f kubernetes-featureflagsadminwebapis-appgw.yaml
+
+    # - task: AzureCLI@2
+    #   displayName: Apply to Kubernetes
+    #   inputs:
+    #     azureSubscription: 'azure-china-devops'
+    #     scriptType: 'bash'
+    #     scriptLocation: 'inlineScript'
+    #     addSpnToEnvironment: true
+    #     inlineScript: |
+    #       az login --service-principal -u ${servicePrincipalId} -p ${servicePrincipalKey} --tenant ${tenantId}
+    #       az aks get-credentials --resource-group feature-flags-co --name ffc-aks-cluster-ce2
+    #       kubectl set image deployment ffcapi ffcapi=ffc0acr0ce2.azurecr.cn/ffcapi:$(Build.BuildId)

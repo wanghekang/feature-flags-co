@@ -1,0 +1,112 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: ffcapi2
+# spec:
+#   replicas: 2
+#   selector:
+#     matchLabels:
+#       app: ffcapi2
+#   strategy:
+#     rollingUpdate:
+#       maxSurge: 1
+#       maxUnavailable: 1
+#   minReadySeconds: 5 
+#   template:
+#     metadata:
+#       labels:
+#         app: ffcapi2
+#     spec:
+#       nodeSelector:
+#         "beta.kubernetes.io/os": linux
+#       containers:
+#       - name: ffcapi2
+#         image: agiletoggle.azurecr.io/ffcapi:#{IMAGE_TAG}#
+#         ports:
+#         - containerPort: 80
+#         resources:
+#           requests:
+#             cpu: 600m
+#           limits:
+#             cpu: 700m
+
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: ffcapi2
+# spec:
+#   type: LoadBalancer
+#   ports:
+#   - port: 80
+#   selector:
+#     app: ffcapi2
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ffcapi
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ffcapi
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5 
+  template:
+    metadata:
+      labels:
+        app: ffcapi
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: ffcapi
+        # image: ffc0acr0ce2.azurecr.io/ffcapi:#{IMAGE_TAG}#
+        image: ffc0acr0ce2.azurecr.io/ffcapi:1036
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 800m
+          limits:
+            cpu: 900m
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ffcapi
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: ffcapi
+
+---
+
+# apiVersion: extensions/v1beta1
+# kind: Ingress
+# metadata:
+#   name: ffcapi
+#   annotations:
+#     kubernetes.io/ingress.class: azure/application-gateway
+#     # appgw.ingress.kubernetes.io/backend-hostname: "api.feature-flags.co"
+#     # appgw.ingress.kubernetes.io/appgw-ssl-certificate: "feature-flags-co-ssl-pfx"
+#     # appgw.ingress.kubernetes.io/health-probe-hostname: "my-backend-host.custom.app"
+#     # appgw.ingress.kubernetes.io/health-probe-port: "80"
+#     appgw.ingress.kubernetes.io/health-probe-path: "/WeatherForecast/probe"
+# spec:
+#   rules:
+#   - host: api.feature-flags.co
+#     http:
+#       paths:
+#       - path: /
+#         backend:
+#           serviceName: ffcapi
+#           servicePort: 80
