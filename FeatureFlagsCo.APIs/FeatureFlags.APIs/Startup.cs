@@ -206,14 +206,6 @@ namespace FeatureFlags.AdminWebAPIs
 
             services.AddSingleton<ICosmosDbService>(
                 InitializeCosmosClientInstanceAsync(Configuration.GetSection("CosmosDb")).GetAwaiter().GetResult());
-
-            //services.AddHttpClient();
-            //services.AddHttpClient("appinsights", c =>
-            //    {
-            //        c.BaseAddress = new Uri("https://api.applicationinsights.azure.cn/v1/apps/cce843e3-99a0-4d77-805a-7aa7ba8882f0/");
-            //        c.DefaultRequestHeaders.Add("x-api-key", "taz163uiy48rnsv5r47z3tc7cs4kqbefov15wf8r");
-            //        c.DefaultRequestHeaders.Add("content-type", "application/json");
-            //    });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

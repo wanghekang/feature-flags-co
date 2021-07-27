@@ -21,7 +21,7 @@ namespace FeatureFlags.APIs.Repositories
         private readonly LdClient _ldClient;
         public LaunchDarklyService()
         {
-            _ldClient = new LdClient("sdk-53c34489-84fa-442e-b5ee-5e2ca2e72e16");
+            _ldClient = new LdClient("");
         }
 
         public bool GetVariation(string ffName)
