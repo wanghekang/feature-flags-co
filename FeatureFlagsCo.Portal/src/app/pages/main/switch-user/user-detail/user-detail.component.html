@@ -1,0 +1,22 @@
+<div class="switch-user-detail">
+    <div class="title">
+    用户属性列表
+    </div>
+    <nz-table #basicTable 
+            [nzData]="list" 
+            [nzFrontPagination]="true"  
+           >
+        <thead>
+          <tr>
+            <th>属性</th>
+            <th>值</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of basicTable.data">
+            <td>{{ user.name }}</td>
+            <td>{{ user.value }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+</div>

@@ -1,0 +1,25 @@
+<form nz-form [formGroup]="forgetForm" (ngSubmit)="doFind()" nzLayout="vertical">
+    <nz-form-item>
+        <nz-form-label>邮箱</nz-form-label>
+        <nz-form-control nzErrorTip="请输入邮箱！">
+            <nz-input-group nzPrefixIcon="user">
+                <input type="text" nz-input formControlName="email" placeholder="邮箱" />
+            </nz-input-group>
+        </nz-form-control>
+    </nz-form-item>
+    <button nz-button class="form-button form-margin" [nzType]="'primary'" [nzLoading]="isLoading">
+        找回密码
+        {{isLoading ? '（' + seconds + '）' : ''}}
+    </button>
+
+</form>
+
+<div nz-row class="form-margin">
+    <div>
+        <span>
+            已有账号？
+            <a (click)="changeRoute('login')">登录</a>
+        </span>
+        <a (click)="changeRoute('/login/register')">注册账户</a>
+    </div>
+</div>

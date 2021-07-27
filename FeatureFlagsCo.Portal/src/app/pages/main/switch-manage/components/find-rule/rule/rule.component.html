@@ -1,0 +1,51 @@
+<section class="rule-item">
+    <div class="key">
+        <div class="tip" *ngIf="isFirst; else andTemplate;">IF</div>
+        <ng-template #andTemplate>
+            <div class="and-tip">AND</div>
+        </ng-template>
+        <div class="select">
+            <nz-select [(ngModel)]="ruleContent.property" (ngModelChange)="onModelChange()">
+                <ng-container *ngFor="let rule of properties">
+                    <nz-option [nzValue]="rule" [nzLabel]="rule"></nz-option>
+                </ng-container>
+            </nz-select>
+        </div>
+        <div  class="select">
+            <nz-select [(ngModel)]="ruleContent.operation" (ngModelChange)="onSelectOption()">
+                <ng-container *ngFor="let rule of ruleValueConfig">
+                    <nz-option [nzValue]="rule.value" [nzLabel]="rule.label"></nz-option>
+                </ng-container>
+            </nz-select>
+        </div>
+    </div>
+    <div class="value">
+        <ng-container [ngSwitch]="ruleContent.type">
+            <ng-container *ngSwitchCase="'string'">
+                <input nz-input [(ngModel)]="ruleContent.value"  (ngModelChange)="onDebounceTimeModelChange()" placeholder="Please enter the text"/>
+            </ng-container>
+            <ng-container *ngSwitchCase="'number'">
+                <input type="number" [(ngModel)]="ruleContent.value"  (ngModelChange)="onDebounceTimeModelChange()" nz-input placeholder="Please enter a number"/>
+            </ng-container>
+            <ng-container *ngSwitchCase="'multi'">
+                <!-- <nz-select nzMode="tags"
+                            nzPlaceHolder="Select users"
+                            nzAllowClear
+                            [compareWith]="compareWith"
+                            [(ngModel)]="ruleContent.multipleValue"
+                            (ngModelChange)="onModelChange()">
+                            <ng-container *ngFor="let item of selectValueList">
+                                <nz-option [nzValue]="item" [nzLabel]="item"></nz-option>
+                            </ng-container>
+                </nz-select> -->
+                <nz-select nzMode="tags" nzPlaceHolder="Tag Mode" [(ngModel)]="ruleContent.multipleValue" (ngModelChange)="onModelChange()">
+                    <nz-option *ngFor="let option of listOfOption" [nzLabel]="option.label" [nzValue]="option.value"></nz-option>
+                  </nz-select>
+            </ng-container>
+        </ng-container>
+    </div>
+    <div class="operator">
+        <i nz-icon nzType="minus" nzTheme="outline" (click)="deleteRule.next()"></i>
+        <i nz-icon nzType="plus" nzTheme="outline" *ngIf="isLast" (click)="addRule.next()"></i>
+    </div>
+</section>

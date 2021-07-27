@@ -1,0 +1,63 @@
+<section class="body">
+  <div class="content">
+      <div class="switch-wrap">
+          <div class="search">
+              <div nz-row>
+                  <div class="search-wrap" nz-col nzSpan="12">
+                      <input nz-input placeholder="按邮箱查找" [(ngModel)]="searhTerm" (ngModelChange)="doSearch()"/>
+                  </div>
+                  <div class="search-wrap wrap-right" nz-col nzSpan="12">
+                    <button nz-button nzType="primary" (click)="addMember()">
+                      <i nz-icon nzType="plus" nzTheme="outline"></i>
+                      添加成员
+                    </button>
+                  </div>
+              </div>
+          </div>
+          <div class="list">
+              <ng-container *ngIf="!isInitLoading; else loadingTem;">
+                  <nz-table #basicTable
+                          [nzData]="searchResult"
+                          [nzPageSize]="10"
+                          [nzHideOnSinglePage]="true"
+                          [nzTotal]="teamMembers.length">
+                      <thead>
+                          <tr>
+                              <th>邮箱</th>
+                              <th>权限</th>
+                              <th>初始密码</th>
+                              <th></th>
+                          </tr>
+                      </thead>
+                      <tbody>
+                          <ng-container *ngFor="let member of basicTable.data">
+                              <tr>
+                                  <td>{{ member.email }}</td>
+                                  <td>{{ member.role }}</td>
+                                  <td>{{ member.initialPassword }}</td>
+                                  <td>
+                                    <ng-container *ngIf="isMemberDeleteBtnVisible(member)">
+                                      <a nz-popconfirm nzPopconfirmTitle="确定删除吗?" nzPopconfirmPlacement="bottom" (nzOnConfirm)="onDeleteMemberClick(member)" [nzIcon]="iconTplMember">
+                                        <i nz-icon nzType="delete" nzTheme="fill"></i>
+                                      </a>
+                                      <ng-template #iconTplMember>
+                                        <i nz-icon nzType="question-circle-o" style="color: red;"></i>
+                                      </ng-template>
+                                    </ng-container>
+                                  </td>
+                              </tr>
+                          </ng-container>
+                      </tbody>
+                  </nz-table>
+              </ng-container>
+              <ng-template #loadingTem>
+                 <div class="spin">
+                      <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+                 </div>
+              </ng-template>
+          </div>
+      </div>
+  </div>
+</section>
+
+<app-member-drawer [visible]="addMemberVisible" [currentAccountId]="currentAccountId" (close)="memberClosed()"></app-member-drawer>

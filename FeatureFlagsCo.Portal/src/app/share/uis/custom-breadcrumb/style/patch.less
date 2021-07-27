@@ -1,0 +1,29 @@
+.xu-breadcrumb {
+  &-link {
+    .anticon + span {
+      margin-left: 4px;
+    }
+  }
+
+  // We introduced an extra layer.
+  & > xu-breadcrumb-item:last-child {
+    color: fade(#000, 85%);
+    a {
+      color: fade(#000, 85%);
+    }
+  }
+
+  &-rtl {
+    > xu-breadcrumb-item {
+      float: right;
+    }
+  }
+}
+
+xu-breadcrumb {
+  display: block;
+}
+
+xu-breadcrumb-item:last-child .xu-breadcrumb-separator {
+  display: none;
+}

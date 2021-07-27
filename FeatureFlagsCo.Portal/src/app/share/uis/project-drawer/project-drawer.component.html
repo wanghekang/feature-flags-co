@@ -1,0 +1,21 @@
+<nz-drawer nzClosable [nzVisible]="visible" nzPlacement="right" [nzWidth]="500" (nzOnClose)="onClose()">
+    <ng-container *nzDrawerContent>
+        <div class="project-drawer-layout">
+            <form nz-form [formGroup]="projectForm" (ngSubmit)="doSubmit()" nzLayout="vertical" class="layout-form">
+
+                <nz-form-item>
+                    <nz-form-label>Project 名称</nz-form-label>
+                    <nz-form-control nzErrorTip="Project 名称！">
+                        <nz-input-group>
+                            <input type="text" nz-input formControlName="name" placeholder="Project 名称" />
+                        </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
+
+                <button nz-button class="form-button form-margin" [nzType]="'primary'" [nzLoading]="isLoading">{{isEditing
+                    ? '更新' : '创建'}}</button>
+            </form>
+        </div>
+    </ng-container>
+</nz-drawer>
+

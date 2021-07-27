@@ -1,0 +1,24 @@
+<section class="body">
+    <div class="rule-title">
+        <span>规则{{index+1}}</span>
+        <i nz-icon
+           nz-popconfirm
+           nzPopconfirmTitle="确认删除该规则吗?"
+           nzPopconfirmPlacement="left"
+           nzType="delete" 
+           nzTheme="outline"
+           (nzOnConfirm)="confirm()"></i>
+    </div>
+    <ng-container *ngFor="let ruleContent of ruleContentList; let key=index; let first=first; let last=last;">
+        <app-rule [ruleContent]="ruleContent" 
+                  [isFirst]="first" 
+                  [isLast]="last"
+                  [properties]="properties"
+                  (addRule)="onAddRule()"
+                  (deleteRule)="onDeleteRuleItem(key)"
+                  (ruleChange)="onRuleChange($event, key)"></app-rule>
+    </ng-container>
+    <app-serve [variationRuleValue]="variationRuleValue"
+               [truePercentage]="percentageRolloutForTrue || 0"
+               (onPercentageChange)="onPercentageChange($event)"></app-serve>
+</section> 

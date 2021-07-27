@@ -1,0 +1,28 @@
+.xu-breadcrumb {
+  &-rtl {
+    direction: rtl;
+
+    > span {
+      float: right;
+    }
+  }
+
+  &-link {
+    > .anticon + span,
+    > .anticon + a {
+      .xu-breadcrumb-rtl & {
+        margin-right: 4px;
+        margin-left: 0;
+      }
+    }
+  }
+
+  &-overlay-link {
+    > .anticon {
+      .xu-breadcrumb-rtl & {
+        margin-right: 4px;
+        margin-left: 0;
+      }
+    }
+  }
+}

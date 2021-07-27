@@ -1,0 +1,64 @@
+<div class="project-layout">
+    <div class="operation-tools">
+        <section nz-col nzSpan="12">
+            <input nz-input placeholder="按项目名字查找" [(ngModel)]="searchValue" />
+        </section>
+
+        <button nz-button nzType="primary" (click)="onCreateProjectClick()">
+            <i nz-icon nzType="plus" nzTheme="outline"></i>
+            添加 Project
+        </button>
+    </div>
+    <div class="project-list" #listRef>
+        <div *ngFor="let project of projects" class="project">
+            <section>
+              <nz-card nzTitle="{{project.name}}" [nzExtra]="extraTemplate">
+                <div nz-row [nzGutter]="16" *ngFor="let env of project.environments; let isLast = last;">
+                  <div nz-col [nzSpan]="21">
+                    <nz-descriptions [nzColumn]="2">
+                      <nz-descriptions-item nzTitle="环境名">{{env.name}}</nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="Secret">{{env.secret}}</nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="描述">{{env.description}}</nz-descriptions-item>
+                      <nz-descriptions-item nzTitle="Mobile Secret">{{env.mobileSecret}}</nz-descriptions-item>
+                    </nz-descriptions>
+                  </div>
+                  <div nz-col [nzSpan]="3">
+                    <nz-space [nzSize]="20">
+                      <ng-container *ngIf="isEnvDeleteBtnVisible(env)">
+                        <a *nzSpaceItem nz-popconfirm nzPopconfirmTitle="确定删除吗?" nzPopconfirmPlacement="bottom" (nzOnConfirm)="onDeleteEnvClick(project, env)" [nzIcon]="iconTplEnv">
+                          <i nz-icon nzType="delete" nzTheme="fill"></i>
+                        </a>
+                      </ng-container>
+                      <ng-template #iconTplEnv>
+                        <i nz-icon nzType="question-circle-o" style="color: red;"></i>
+                      </ng-template>
+                      <button *nzSpaceItem nz-button nzType="default" (click)="onEditEnvClick(project, env)">编辑</button>
+                    </nz-space>
+                  </div>
+                  <nz-divider *ngIf="!isLast"></nz-divider>
+                </div>
+              </nz-card>
+              <ng-template #extraTemplate>
+                <nz-space [nzSize]="20">
+                  <ng-container *ngIf="currentProjectEnv?.projectId !== project.id">
+                    <a *nzSpaceItem nz-popconfirm nzPopconfirmTitle="确定删除吗?" nzPopconfirmPlacement="bottom" (nzOnConfirm)="onDeleteProjectClick(project)" [nzIcon]="iconTplProject">
+                      <i nz-icon nzType="delete" nzTheme="fill"></i>
+                    </a>
+                  </ng-container>
+                  <ng-template #iconTplProject>
+                    <i nz-icon nzType="question-circle-o" style="color: red;"></i>
+                  </ng-template>
+                  <button *nzSpaceItem nz-button nzType="default" (click)="onEditProjectClick(project)">编辑</button>
+                  <button *nzSpaceItem nz-button nzType="primary" (click)="onCreateEnvClick(project)">
+                    <i nz-icon nzType="plus" nzTheme="outline"></i>
+                    添加环境
+                  </button>
+                </nz-space>
+              </ng-template>
+            </section>
+        </div>
+    </div>
+</div>
+
+<app-project-drawer [visible]="creatEditProjectFormVisible" [currentAccountId]="currentAccountId" (close)="projectClosed($event)" [project]="project"></app-project-drawer>
+<app-env-drawer [visible]="creatEditEnvFormVisible" [currentAccountId]="currentAccountId" (close)="envClosed($event)" [env]="env"></app-env-drawer>

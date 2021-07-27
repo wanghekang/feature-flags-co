@@ -1,0 +1,60 @@
+.project-layout {
+    height: 100%;
+    overflow: hidden;
+}
+
+.operation-tools {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid rgb(240, 240, 240);
+
+    >section>input {
+        margin-right: 8px;
+    }
+}
+
+.project-list {
+    height: calc(100% - 73px);
+    overflow: auto;
+
+    .project {
+        //border-bottom: 1px solid rgb(240, 240, 240);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+
+        .ant-card-head-title {
+          font-size: 20px !important;
+          color: red;
+        }
+
+        >section {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: 600;
+            padding: 8px 0;
+        }
+
+        .description {
+            color: #00000080;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}
+
+::ng-deep {
+    .ant-tabs,
+    .ant-tabs-content {
+        height: 100%;
+    }
+}

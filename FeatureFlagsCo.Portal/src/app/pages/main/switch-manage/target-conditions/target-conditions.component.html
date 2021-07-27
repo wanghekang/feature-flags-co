@@ -1,0 +1,78 @@
+<section class="body">
+    <app-layout>
+        <app-nav-btns name="header" [routeUrl]="'condition'" [id]="switchId"></app-nav-btns>
+        <ng-container *ngTemplateOutlet="conditionTemplate" name="detail"></ng-container>
+    </app-layout>
+</section>
+
+<ng-template #conditionTemplate>
+    <ng-container *ngIf="!isLoading; else loadingTem;"> 
+        <div class="detail-body">
+            <button class="save"nz-button nzType="primary" (click)="onSaveSetting()">保存设置</button>
+            <div class="item">
+                <p class="label">开启或关闭开关</p>
+                <nz-button-group>
+                    <button nz-button [nzType]="switchStatus === 'Enabled' ? 'primary' : 'default'"  (click)="onChangeSwitchStatus('Enabled')">开</button>
+                    <button nz-button [nzType]="switchStatus === 'Disabled' ? 'primary' : 'default'"  (click)="onChangeSwitchStatus('Disabled')">关</button>
+                </nz-button-group>
+            </div>
+            <div class="item">
+                <p class="label">上游开关(若下方上游开关不符合条件，则此开关处于关闭状态)</p>
+                <upper-switch [featureList]="featureList" [upperFeatures]="upperFeatures" (onUpperSwicthChange)="onUpperSwicthChange($event)"></upper-switch>
+            </div>
+            <div class="item">
+                <p class="label">目标用户</p>
+                <div class="content">
+                    <target-user [type]="'true'" 
+                                 [userList]="userList"
+                                 [selectedUserDetailList]="targetUserSelectedListTrue"
+                                 (search)="onSearchUser($event)"
+                                 (onSelectedUserListChange)="onSelectedUserListChange($event, 'true')"></target-user>
+                </div>
+                <div class="content">
+                    <target-user [type]="'false'" 
+                                 [tipColor]="'#1E90FF'" 
+                                 [userList]="userList" 
+                                 [selectedUserDetailList]="targetUserSelectedListFalse"
+                                 (search)="onSearchUser($event)"
+                                 (onSelectedUserListChange)="onSelectedUserListChange($event, 'false')"></target-user>
+                </div>
+            </div>
+            <div class="item">
+                <p class="label">使用匹配条件找到目标用户</p>
+                <ng-container *ngFor="let condition of featureDetail?.getFftuwmtr(); let key=index;">
+                    <div class="content">
+                        <find-rule [data]="condition" 
+                                   [properties]="propertiesList"
+                                   [index]="key"
+                                   (deleteRule)="onDeleteCondition(key)"
+                                   (percentageChange)="onPercentageChange($event, key)"
+                                   (ruleConfigChange)="onRuleConfigChange($event, key)"></find-rule>
+                    </div>
+                </ng-container>
+                <button nz-button nzType="primary" (click)="onAddCondition()">添加规则</button>
+            </div>
+            <div class="item ">
+                <p class="label">默认返回值</p>
+                <app-serve [isSingle]="true"
+                           [variationRuleValue]="featureDetail?.getFFDefaultRuleValue()"
+                           [truePercentage]="featureDetail?.getPercentageValue('true') || 0"
+                           (onPercentageChange)="onDefaultValuePercentageChange($event)"></app-serve>
+            </div>
+            <div class="item">
+                <div class="default">
+                    <span class="label">如果服务器关闭了，应返回</span>
+                    <div class="btn" (click)="switchBaseProperty()">
+                        {{featureDetail?.getFFBasedProperty() ? featureDetail?.getFFBasedProperty(): false}}
+                    </div>
+                </div>
+                <span class="tip">在任何其他情况下，开关都将返回 false</span>
+            </div>
+        </div>
+    </ng-container>
+    <ng-template #loadingTem>
+        <div class="spin">
+            <nz-spin nzSimple [nzSize]="'large'"></nz-spin>
+        </div>
+    </ng-template>
+</ng-template>

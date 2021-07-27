@@ -1,0 +1,28 @@
+<nz-drawer nzClosable [nzVisible]="visible" nzPlacement="right" [nzWidth]="500" (nzOnClose)="onClose()">
+    <ng-container *nzDrawerContent>
+        <div class="member-drawer-layout">
+            <form nz-form [formGroup]="memberForm" (ngSubmit)="doSubmit()" nzLayout="vertical" class="layout-form">
+
+                <nz-form-item>
+                    <nz-form-label>邮箱</nz-form-label>
+                    <nz-form-control nzErrorTip="邮箱">
+                        <nz-input-group>
+                            <input type="text" nz-input formControlName="email" placeholder="邮箱" />
+                        </nz-input-group>
+                    </nz-form-control>
+                </nz-form-item>
+                <nz-form-item>
+                  <nz-form-label>初始权限</nz-form-label>
+                  <nz-form-control nzErrorTip="初始权限!">
+                    <nz-select nzPlaceHolder="选择权限" formControlName="role">
+                      <nz-option *ngFor="let role of memberRoles" [nzLabel]="role" [nzValue]="role"></nz-option>
+                    </nz-select>
+                  </nz-form-control>
+              </nz-form-item>
+
+                <button nz-button class="form-button form-margin" [nzType]="'primary'" [nzLoading]="isLoading">添加</button>
+            </form>
+        </div>
+    </ng-container>
+</nz-drawer>
+

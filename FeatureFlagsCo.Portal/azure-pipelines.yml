@@ -1,0 +1,116 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  - main
+
+pool:
+  vmImage: windows-latest
+
+
+stages:
+
+- stage: 'Development'
+  jobs:
+  - deployment: 'DeployToDevelopment'
+    environment: 'Approval_AdminPortal_Dev'
+    strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: self
+              - task: NodeTool@0
+                inputs:
+                  versionSpec: '14.x'
+                displayName: 'Install Node.js'
+
+              - task: Bash@3
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                    cd '$(System.DefaultWorkingDirectory)'
+                    npm install -g @angular/cli
+                    npm install
+                    ng build
+                displayName: 'npm install and build'
+
+              - task: AzureFileCopy@4
+                inputs:
+                  SourcePath: $(System.DefaultWorkingDirectory)/dist/feature-flagsco-fontend/*
+                  azureSubscription: 'azure-china-devops'
+                  Destination: 'AzureBlob'
+                  storage: 'ffc0stws0adminportal0dev'
+                  ContainerName: $web
+
+- stage: 'Production'
+  dependsOn: Development
+  condition: succeeded()
+  jobs:
+  - deployment: 'DeployToProduction'
+    environment: 'Approval_AdminPortal'
+    strategy:
+        runOnce:
+          deploy:
+            steps:
+              - checkout: self
+              - task: NodeTool@0
+                inputs:
+                  versionSpec: '14.x'
+                displayName: 'Install Node.js'
+
+              - task: Bash@3
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                    cd '$(System.DefaultWorkingDirectory)'
+                    npm install -g @angular/cli
+                    npm install
+                    ng build --prod
+                displayName: 'npm install and build'
+
+              - task: AzureFileCopy@4
+                inputs:
+                  SourcePath: $(System.DefaultWorkingDirectory)/dist/feature-flagsco-fontend/*
+                  azureSubscription: 'azure-china-devops'
+                  Destination: 'AzureBlob'
+                  storage: 'ffc0st0sws0adminportal'
+                  ContainerName: $web
+
+
+
+
+
+# stages:
+# - stage:
+#   jobs:
+
+#     - job: DeployAzureResources
+#       displayName: 'Deploy Resources'
+#       steps:
+#         - checkout: self
+#         - task: NodeTool@0
+#           inputs:
+#             versionSpec: '14.x'
+#           displayName: 'Install Node.js'
+
+#         - task: Bash@3
+#           inputs:
+#             targetType: 'inline'
+#             script: |
+#               cd '$(System.DefaultWorkingDirectory)'
+#               npm install -g @angular/cli
+#               npm install
+#               ng build --prod
+#           displayName: 'npm install and build'
+
+#         - task: AzureFileCopy@4
+#           inputs:
+#             SourcePath: $(System.DefaultWorkingDirectory)/dist/feature-flagsco-fontend/*
+#             azureSubscription: 'azure-china-devops'
+#             Destination: 'AzureBlob'
+#             storage: 'ffc0st0sws0adminportal'
+#             ContainerName: $web
+
+
